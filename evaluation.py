@@ -31,6 +31,9 @@ def EPE(ground_flow,predict_flow):
             temp = math.pow(first - predict_flow[i][j][0],2)
             temp += math.pow(second - predict_flow[i][j][1],2)
             rt += math.sqrt(temp)
+    x,y = len(ground_flow),len(ground_flow[0])
+    accuracy = rt/(x*y)
+    return accuracy
 
 def EPE_RB(ground_flow,predict_flow):
     rt = 0
@@ -64,13 +67,18 @@ def AAE(ground_flow,predict_flow):
             if malx == 0 or maly == 0:
                 continue
             if malx !=0 and maly != 0:
-                try:
-                    num = math.acos(dotProduct / (malx * maly))
-                except:
-                    print(first, second, predict_flow[i][j][0], predict_flow[i][j][1])
-                    print(dotProduct)
-                    print(malx,maly)
-                    print(dotProduct / (malx * maly))
+                #try:
+                arc = dotProduct / (malx * maly)
+                if arc < -1:
+                    arc = (1+arc)
+                if arc > 1:
+                    arc = arc -1
+                num = math.acos(arc)
+                #except:
+                #    print(first, second, predict_flow[i][j][0], predict_flow[i][j][1])
+                #    print(dotProduct)
+                #    print(malx,maly)
+                #    print(dotProduct / (malx * maly))
             rt += num
 
     x,y = len(ground_flow),len(ground_flow[0])
@@ -93,13 +101,18 @@ def AAE_RB(ground_flow,predict_flow):
             if malx == 0 or maly == 0:
                 continue
             if malx !=0 and maly != 0:
-                try:
-                    num = math.acos(dotProduct / (malx * maly))
-                except:
-                    print(first, second, predict_flow[i][j][0], predict_flow[i][j][1])
-                    print(dotProduct)
-                    print(malx,maly)
-                    print(dotProduct / (malx * maly))
+                #try:
+                arc = dotProduct / (malx * maly)
+                if arc < -1:
+                    arc = (1+arc)
+                if arc > 1:
+                    arc = arc -1
+                num = math.acos(arc)
+                #except:
+                    #print(first, second, predict_flow[i][j][0], predict_flow[i][j][1])
+                    #print(dotProduct)
+                    #print(malx,maly)
+                    #print(dotProduct / (malx * maly))
             rt += num
 
     x,y = len(ground_flow),len(ground_flow[0])
@@ -109,23 +122,35 @@ def AAE_RB(ground_flow,predict_flow):
 def run_RB():
     predict_flows = []
     ground_truth = []
-
+    #file_names = []
     for flow in os.listdir("./middleburryflow/"):
         predict_flows.append("./middleburryflow/"+ str(flow))
     for gt in os.listdir("./middleburry/"):
         ground_truth.append("./middleburry/"+str(gt))
-
+    #for fn in os.listdir("./other-color-twoframes/other-data"):
+    #    file_names.append(fn)
     predict_flows.sort()
     ground_truth.sort()
 
     totalEPE = 0
     totalAAE = 0
+    allEPE,allAAE = [],[]
+
     for i in range(len(predict_flows)):
         ground_flow = read_flow(ground_truth[i])
         predict_flow = read_flow(predict_flows[i])
-        totalEPE += EPE_RB(ground_flow,predict_flow)
-        totalAAE += AAE_RB(ground_flow,predict_flow)
-
+        EPE = EPE_RB(ground_flow,predict_flow)
+        AAE = AAE_RB(ground_flow,predict_flow)
+        totalEPE += EPE
+        totalAAE += AAE
+        allEPE.append(EPE)
+        allAAE.append(AAE)
+    #print("File Name:")
+    #print(file_names)
+    print("EPE values:")
+    print(allEPE)
+    print("AAE values:")
+    print(allAAE)
     print("Average EPE value:" + str(totalEPE/len(predict_flows)))
     print("Average AAE value:" + str(totalAAE/len(predict_flows)))
 
@@ -152,4 +177,5 @@ def run():
     print("Average EPE value:" + str(totalEPE/len(predict_flows)))
     print("Average AAE value:" + str(totalAAE/len(predict_flows)))
 
-run_RB()
+if __name__ == '__main__':
+    run_RB()
