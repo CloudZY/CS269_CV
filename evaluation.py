@@ -27,7 +27,7 @@ def EPE(ground_flow,predict_flow):
             first = ground_flow[i][j][0]
             second = ground_flow[i][j][1]
             if abs(first) >= 1e9 or abs(second) >= 1e9:
-                continue
+                first,second =0,0
             temp = math.pow(first - predict_flow[i][j][0],2)
             temp += math.pow(second - predict_flow[i][j][1],2)
             rt += math.sqrt(temp)
@@ -39,7 +39,7 @@ def EPE_RB(ground_flow,predict_flow):
             first = -1*ground_flow[i][j][0]
             second = -1*ground_flow[i][j][1]
             if abs(first) >= 1e9 or abs(second) >= 1e9:
-                continue
+                first,second = 0,0
             temp = math.pow(first - predict_flow[i][j][0],2)
             temp += math.pow(second - predict_flow[i][j][1],2)
             rt += math.sqrt(temp)
