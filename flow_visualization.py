@@ -46,7 +46,7 @@ def save_flow(flowname,imagename,outname):
 
     curr = cv2.imread(imagename)
     curr_gray = cv2.cvtColor(curr, cv2.COLOR_BGR2GRAY)
-    out_flow = draw_flow(curr_gray,velx,vely)
+    out_flow = draw_flow(curr,velx,vely)
 
     cv2.imwrite(outname,out_flow)
 
