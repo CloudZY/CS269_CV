@@ -10,8 +10,8 @@ def imgs2video(imgs_dir, save_name):
     imgs = glob.glob(os.path.join(imgs_dir, '*.png'))
 
     images = []
-    for image in os.listdir("./images_after_warp/"):
-        images.append("./images_after_warp/" + str(image))
+    for image in os.listdir("./images_after_warp_farneback/"):
+        images.append("./images_after_warp_farneback/" + str(image))
     #print(images)
     for i in images:
         frame = cv2.imread(i)
@@ -19,4 +19,4 @@ def imgs2video(imgs_dir, save_name):
 
     video_writer.release()
 
-imgs2video("./images_after_warp","deep_after_warp_video.avi")
+imgs2video("./images_after_warp_farneback","farneback_after_warp_video.avi")

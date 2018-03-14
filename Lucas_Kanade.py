@@ -1,6 +1,7 @@
 import numpy as np
 import cv2
 import os
+import glob
 
 #cap = cv2.VideoCapture('videoplayback.mp4')
 
@@ -28,6 +29,9 @@ old_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 p0 = cv2.goodFeaturesToTrack(old_gray, mask = None, **feature_params)
 #print(p0)
 #p0 = old_gray
+fps = 6
+fourcc = cv2.VideoWriter_fourcc(*'MJPG')
+video_writer = cv2.VideoWriter("lucas_after_flow_video.avi", fourcc, fps, (1024, 436))
 
 for index in range(1,len(images)):
     frame = cv2.imread(images[index])
@@ -49,7 +53,8 @@ for index in range(1,len(images)):
             frame = cv2.circle(frame,(a,b),5,color[i].tolist(),-1)
     img = cv2.add(frame,mask)
 
-    cv2.imshow(images[0],frame)
+    #cv2.imshow(images[0],frame)
+    video_writer.write(frame)
     k = cv2.waitKey(60) & 0xff
     if k == 27:
         break
@@ -59,3 +64,4 @@ for index in range(1,len(images)):
     p0 = good_new.reshape(-1,1,2)
 
 cv2.destroyAllWindows()
+video_writer.release()

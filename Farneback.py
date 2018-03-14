@@ -125,6 +125,7 @@ if __name__ == '__main__':
     for image in os.listdir("./images/"):
         images.append("./images/" + str(image))
     images = images[:-1]
+    images.sort()
     for i in range(len(images)):
         name = str(i+1)
         if i+1 < 10:

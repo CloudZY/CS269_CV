@@ -120,26 +120,26 @@ def lucas_kanade(img1, img2):
 #     cv.DestroyAllWindows()
 
 if __name__ == '__main__':
-    image_directory_path = './other-data'
-    ground_truth_directory_path = './other-gt-flow'
-    dataset = []
-    epe_set = []
-    aae_set = []
-    for dataset_name in os.listdir(image_directory_path):
-        dataset.append(dataset_name)
-        predict_flow = lucas_kanade(image_directory_path+'/'+dataset_name+'/frame10.png',
-                            image_directory_path + '/' + dataset_name + '/frame11.png')
-        ground_flow = evaluation.read_flow(ground_truth_directory_path+'/'+dataset_name+'/flow10.flo')
-        epe = evaluation.EPE_RB(ground_flow, predict_flow)
-        aae = evaluation.AAE_RB(ground_flow, predict_flow)
-        epe_set.append(epe)
-        aae_set.append(aae)
-    print(dataset)
-    print(epe_set)
-    print(aae_set)
-
-    with open('Lucas_Kanade_result.txt', 'w') as f:
-    # with open('Horn_Schunck_result.txt', 'w') as f:
-        for i in range(len(dataset)):
-            f.write(dataset[i] + ' ' + str(epe_set[i]) + ' ' + str(aae_set[i]) +'\n')
-    f.close()
+    # image_directory_path = './other-data'
+    # ground_truth_directory_path = './other-gt-flow'
+    # dataset = []
+    # epe_set = []
+    # aae_set = []
+    # for dataset_name in os.listdir(image_directory_path):
+    #     dataset.append(dataset_name)
+    #     predict_flow = lucas_kanade(image_directory_path+'/'+dataset_name+'/frame10.png',
+    #                         image_directory_path + '/' + dataset_name + '/frame11.png')
+    #     ground_flow = evaluation.read_flow(ground_truth_directory_path+'/'+dataset_name+'/flow10.flo')
+    #     epe = evaluation.EPE_RB(ground_flow, predict_flow)
+    #     aae = evaluation.AAE_RB(ground_flow, predict_flow)
+    #     epe_set.append(epe)
+    #     aae_set.append(aae)
+    # print(dataset)
+    # print(epe_set)
+    # print(aae_set)
+    #
+    # with open('Lucas_Kanade_result.txt', 'w') as f:
+    # # with open('Horn_Schunck_result.txt', 'w') as f:
+    #     for i in range(len(dataset)):
+    #         f.write(dataset[i] + ' ' + str(epe_set[i]) + ' ' + str(aae_set[i]) +'\n')
+    # f.close()
