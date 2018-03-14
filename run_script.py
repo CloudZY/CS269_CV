@@ -10,6 +10,7 @@ for document in os.listdir(path):
     documents.append(path+str(document))
 
 print(documents)
+documents.sort()
 
 for i in range(len(documents)):
     if i >= len(documents) -1:
