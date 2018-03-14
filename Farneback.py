@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 import os
+import flow_visualization
 import evaluation
 
 def draw_flow(img, flow, step=16):
@@ -38,32 +39,32 @@ def warp_flow(img, flow):
 def gunnar_farneback(img1, img2):
     img1_gray = cv2.imread(img1, cv2.IMREAD_GRAYSCALE)
     img2_gray = cv2.imread(img2, cv2.IMREAD_GRAYSCALE)
-    flow = cv2.calcOpticalFlowFarneback(img1_gray, img2_gray, 0.5, 3, 15, 3, 5, 1.2, 0)
+    flow = cv2.calcOpticalFlowFarneback(img1_gray, img2_gray, 0.5, 3, 15, 3, 5, 2, 0)
     return flow
 
 if __name__ == '__main__':
-    image_directory_path = './other-data'
-    ground_truth_directory_path = './other-gt-flow'
-    dataset = []
-    epe_set = []
-    aae_set = []
-    for dataset_name in os.listdir(image_directory_path):
-        dataset.append(dataset_name)
-        predict_flow = gunnar_farneback(image_directory_path+'/'+dataset_name+'/frame10.png',
-                            image_directory_path + '/' + dataset_name + '/frame11.png')
-        ground_flow = evaluation.read_flow(ground_truth_directory_path+'/'+dataset_name+'/flow10.flo')
-        epe = evaluation.EPE_RB(ground_flow, predict_flow)
-        aae = evaluation.AAE_RB(ground_flow, predict_flow)
-        epe_set.append(epe)
-        aae_set.append(aae)
-    print(dataset)
-    print(epe_set)
-    print(aae_set)
-
-    with open('Gunnar_Farneback_result.txt', 'w') as f:
-        for i in range(len(dataset)):
-            f.write(dataset[i] + ' ' + str(epe_set[i]) + ' ' + str(aae_set[i]) + '\n')
-    f.close()
+    # image_directory_path = './other-data'
+    # ground_truth_directory_path = './other-gt-flow'
+    # dataset = []
+    # epe_set = []
+    # aae_set = []
+    # for dataset_name in os.listdir(image_directory_path):
+    #     dataset.append(dataset_name)
+    #     predict_flow = gunnar_farneback(image_directory_path+'/'+dataset_name+'/frame10.png',
+    #                         image_directory_path + '/' + dataset_name + '/frame11.png')
+    #     ground_flow = evaluation.read_flow(ground_truth_directory_path+'/'+dataset_name+'/flow10.flo')
+    #     epe = evaluation.EPE_RB(ground_flow, predict_flow)
+    #     aae = evaluation.AAE_RB(ground_flow, predict_flow)
+    #     epe_set.append(epe)
+    #     aae_set.append(aae)
+    # print(dataset)
+    # print(epe_set)
+    # print(aae_set)
+    #
+    # with open('Gunnar_Farneback_result.txt', 'w') as f:
+    #     for i in range(len(dataset)):
+    #         f.write(dataset[i] + ' ' + str(epe_set[i]) + ' ' + str(aae_set[i]) + '\n')
+    # f.close()
 
 # if __name__ == '__main__':
 #     # Optical flow for 2 images
@@ -117,3 +118,20 @@ if __name__ == '__main__':
 #         else:
 #             break
 #         cv2.destroyAllWindows()
+
+    images = []
+    outnames = []
+
+    for image in os.listdir("./images/"):
+        images.append("./images/" + str(image))
+    images = images[:-1]
+    for i in range(len(images)):
+        name = str(i+1)
+        if i+1 < 10:
+            name = "0" + name
+        outnames.append("./images_after_flow_farneback/" + "out_image_" + name + ".png")
+    for i in range(len(images)):
+        if i+1 == len(images):
+            break
+        print(images[i],images[i+1])
+        flow_visualization.save_flow_farneback(gunnar_farneback(images[i],images[i+1]), images[i], outnames[i])

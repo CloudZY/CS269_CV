@@ -51,6 +51,37 @@ def save_flow(flowname,imagename,outname):
 
     cv2.imwrite(outname,out_flow)
 
+def save_flow_farneback(flow, imagename, outname):
+    #flow = read_flow(flowname)
+    # flow = read_flow("./flow/sintel.flo")
+    #print(flowname, imagename, outname)
+    velx = []
+    vely = []
+    for row in flow:
+        newx = []
+        newy = []
+        for col in row:
+            newx.append(col[0])
+            newy.append(col[1])
+        velx.append(newx)
+        vely.append(newy)
+
+    def draw_flow(img, velx, vely, step=16):
+        cols, rows = img.shape[:2]
+        for i in range(0, cols, step):
+            for j in range(0, rows, step):
+                dx = int(velx[i][j])
+                dy = int(vely[i][j])
+                cv2.line(img, (j, i), (j + dy, i + dx), (0, 255, 0))
+                cv2.circle(img, (j, i), 1, (0, 255, 0), -1)
+        return img
+
+    curr = cv2.imread(imagename)
+    curr_gray = cv2.cvtColor(curr, cv2.COLOR_BGR2GRAY)
+    out_flow = draw_flow(curr, velx, vely)
+
+    cv2.imwrite(outname, out_flow)
+
     ##def draw_flow(img, flow, step=16):
     ##    h, w = img.shape[:2]
     ##    y, x = np.mgrid[step/2 : h : step, step/2 : w : step].reshape(2, -1)
@@ -70,20 +101,6 @@ def save_flow(flowname,imagename,outname):
     ##cv2.imshow('./flow/frame10.png',out_flow)
 
 if __name__ == '__main__':
-    # flows = []
-    # images = []
-    # outnames = []
-    #
-    # for flow in os.listdir("./flow/"):
-    #     flows.append("./flow/" + str(flow))
-    # for image in os.listdir("./images/"):
-    #     images.append("./images/" + str(image))
-    # images = images[:-1]
-    # for i in range(len(flows)):
-    #     outnames.append("./images_after_flow/" + "out_image_" + str(i + 1) + ".png")
-    # for i in range(len(flows)):
-    #     save_flow(flows[i], images[i], outnames[i])
-
     flows = []
     images = []
     outnames = []
@@ -92,9 +109,29 @@ if __name__ == '__main__':
         flows.append("./flow/" + str(flow))
     for image in os.listdir("./images/"):
         images.append("./images/" + str(image))
+    images = images[:-1]
     for i in range(len(flows)):
-        outnames.append("./images_after_warp/" + "out_image_" + str(i + 1) + ".png")
+        name = str(i+1)
+        if i+1 < 10:
+            name = "0" + name
+        outnames.append("./images_after_flow/" + "out_image_" + name + ".png")
     for i in range(len(flows)):
-        img = cv2.imread(images[i])
-        img_warp = Farneback.warp_flow(img, read_flow(flows[i]))
-        cv2.imwrite(outnames[i], img_warp)
+        save_flow(flows[i], images[i], outnames[i])
+
+    # flows = []
+    # images = []
+    # outnames = []
+    #
+    # for flow in os.listdir("./flow/"):
+    #     flows.append("./flow/" + str(flow))
+    # for image in os.listdir("./images/"):
+    #     images.append("./images/" + str(image))
+    # for i in range(len(flows)):
+    #     name = str(i+1)
+    #     if i+1 < 10:
+    #         name = "0" + name
+    #     outnames.append("./images_after_warp/" + "out_image_" + name + ".png")
+    # for i in range(len(flows)):
+    #     img = cv2.imread(images[i])
+    #     img_warp = Farneback.warp_flow(img, read_flow(flows[i]))
+    #     cv2.imwrite(outnames[i], img_warp)
