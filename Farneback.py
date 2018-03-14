@@ -39,7 +39,7 @@ def warp_flow(img, flow):
 def gunnar_farneback(img1, img2):
     img1_gray = cv2.imread(img1, cv2.IMREAD_GRAYSCALE)
     img2_gray = cv2.imread(img2, cv2.IMREAD_GRAYSCALE)
-    flow = cv2.calcOpticalFlowFarneback(img1_gray, img2_gray, 0.5, 3, 15, 3, 5, 2, 0)
+    flow = cv2.calcOpticalFlowFarneback(img1_gray, img2_gray, 0.5, 3, 15, 3, 5, 1.2, 0)
     return flow
 
 if __name__ == '__main__':
