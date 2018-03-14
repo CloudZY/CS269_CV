@@ -3,21 +3,21 @@ import math
 import os
 
 def read_flow(filename):
-        f = open(filename, 'rb')
-        magic = np.fromfile(f, np.float32, count=1)
-        data2d = None
+    f = open(filename, 'rb')
+    magic = np.fromfile(f, np.float32, count=1)
+    data2d = None
 
-        if 202021.25 != magic:
-            print('Magic number incorrect. Invalid .flo file')
-        else:
-            w = np.fromfile(f, np.int32, count=1)[0]
-            h = np.fromfile(f, np.int32, count=1)[0]
-            print("Reading %d x %d flo file" % (h, w))
-            data2d = np.fromfile(f, np.float32, count=2 * w * h)
-            # reshape data into 3D array (columns, rows, channels)
-            data2d = np.resize(data2d, (h, w, 2))
-        f.close()
-        return data2d
+    if 202021.25 != magic:
+        print('Magic number incorrect. Invalid .flo file')
+    else:
+        w = np.fromfile(f, np.int32, count=1)[0]
+        h = np.fromfile(f, np.int32, count=1)[0]
+        print("Reading %d x %d flo file" % (h, w))
+        data2d = np.fromfile(f, np.float32, count=2 * w * h)
+        # reshape data into 3D array (columns, rows, channels)
+        data2d = np.resize(data2d, (h, w, 2))
+    f.close()
+    return data2d
 
 def EPE(ground_flow,predict_flow):
     rt = 0
