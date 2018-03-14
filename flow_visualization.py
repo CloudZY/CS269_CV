@@ -1,23 +1,24 @@
 import numpy as np
 import cv2
 import os
+import Farneback
 
 def read_flow(filename):
-        f = open(filename, 'rb')
-        magic = np.fromfile(f, np.float32, count=1)
-        data2d = None
+    f = open(filename, 'rb')
+    magic = np.fromfile(f, np.float32, count=1)
+    data2d = None
 
-        if 202021.25 != magic:
-            print('Magic number incorrect. Invalid .flo file')
-        else:
-            w = np.fromfile(f, np.int32, count=1)[0]
-            h = np.fromfile(f, np.int32, count=1)[0]
-            print("Reading %d x %d flo file" % (h, w))
-            data2d = np.fromfile(f, np.float32, count=2 * w * h)
-            # reshape data into 3D array (columns, rows, channels)
-            data2d = np.resize(data2d, (h, w, 2))
-        f.close()
-        return data2d
+    if 202021.25 != magic:
+        print('Magic number incorrect. Invalid .flo file')
+    else:
+        w = np.fromfile(f, np.int32, count=1)[0]
+        h = np.fromfile(f, np.int32, count=1)[0]
+        print("Reading %d x %d flo file" % (h, w))
+        data2d = np.fromfile(f, np.float32, count=2 * w * h)
+        # reshape data into 3D array (columns, rows, channels)
+        data2d = np.resize(data2d, (h, w, 2))
+    f.close()
+    return data2d
 
 def save_flow(flowname,imagename,outname):
     flow = read_flow(flowname)
@@ -68,17 +69,32 @@ def save_flow(flowname,imagename,outname):
     ##
     ##cv2.imshow('./flow/frame10.png',out_flow)
 
-flows = []
-images = []
-outnames = []
+if __name__ == '__main__':
+    # flows = []
+    # images = []
+    # outnames = []
+    #
+    # for flow in os.listdir("./flow/"):
+    #     flows.append("./flow/" + str(flow))
+    # for image in os.listdir("./images/"):
+    #     images.append("./images/" + str(image))
+    # images = images[:-1]
+    # for i in range(len(flows)):
+    #     outnames.append("./images_after_flow/" + "out_image_" + str(i + 1) + ".png")
+    # for i in range(len(flows)):
+    #     save_flow(flows[i], images[i], outnames[i])
 
-for flow in os.listdir("./flow/"):
-    flows.append("./flow/"+ str(flow))
-for image in os.listdir("./images/"):
-    images.append("./images/"+str(image))
-images = images[:-1]
-for i in range(len(flows)):
-    outnames.append("./images_after_flow/" + "out_image_" + str(i+1)+".png")
-for i in range(len(flows)):
-    save_flow(flows[i],images[i],outnames[i])
+    flows = []
+    images = []
+    outnames = []
 
+    for flow in os.listdir("./flow/"):
+        flows.append("./flow/" + str(flow))
+    for image in os.listdir("./images/"):
+        images.append("./images/" + str(image))
+    for i in range(len(flows)):
+        outnames.append("./images_after_warp/" + "out_image_" + str(i + 1) + ".png")
+    for i in range(len(flows)):
+        img = cv2.imread(images[i])
+        img_warp = Farneback.warp_flow(img, read_flow(flows[i]))
+        cv2.imwrite(outnames[i], img_warp)
