@@ -1,5 +1,8 @@
 import cv2
 import numpy as np
+
+# Code that add optical flow on a video file
+
 cap = cv2.VideoCapture("videoplayback.mp4")
 
 ret, frame1 = cap.read()

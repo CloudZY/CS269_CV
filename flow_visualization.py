@@ -3,6 +3,8 @@ import cv2
 import os
 import Farneback
 
+# File use to add optical flow to the image and store the image file for further use when generating video
+
 def read_flow(filename):
     f = open(filename, 'rb')
     magic = np.fromfile(f, np.float32, count=1)
@@ -100,7 +102,26 @@ def save_flow_farneback(flow, imagename, outname):
     ##
     ##cv2.imshow('./flow/frame10.png',out_flow)
 
-if __name__ == '__main__':
+def generate_image_farneback():
+    flows = []
+    images = []
+    outnames = []
+
+    for flow in os.listdir("./flow/"):
+        flows.append("./flow/" + str(flow))
+    for image in os.listdir("./images/"):
+        images.append("./images/" + str(image))
+    for i in range(len(flows)):
+        name = str(i+1)
+        if i+1 < 10:
+            name = "0" + name
+        outnames.append("./images_after_warp/" + "out_image_" + name + ".png")
+    for i in range(len(flows)):
+        img = cv2.imread(images[i])
+        img_warp = Farneback.warp_flow(img, read_flow(flows[i]))
+        cv2.imwrite(outnames[i], img_warp)
+
+def generate_image():
     flows = []
     images = []
     outnames = []
@@ -118,20 +139,6 @@ if __name__ == '__main__':
     for i in range(len(flows)):
         save_flow(flows[i], images[i], outnames[i])
 
-    # flows = []
-    # images = []
-    # outnames = []
-    #
-    # for flow in os.listdir("./flow/"):
-    #     flows.append("./flow/" + str(flow))
-    # for image in os.listdir("./images/"):
-    #     images.append("./images/" + str(image))
-    # for i in range(len(flows)):
-    #     name = str(i+1)
-    #     if i+1 < 10:
-    #         name = "0" + name
-    #     outnames.append("./images_after_warp/" + "out_image_" + name + ".png")
-    # for i in range(len(flows)):
-    #     img = cv2.imread(images[i])
-    #     img_warp = Farneback.warp_flow(img, read_flow(flows[i]))
-    #     cv2.imwrite(outnames[i], img_warp)
+if __name__ == '__main__':
+    generate_image()
+
