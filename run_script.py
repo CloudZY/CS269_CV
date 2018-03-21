@@ -1,8 +1,7 @@
 import os
 import subprocess
 
-#for i in range(2):
-#    os.system("python test.py")
+# File that used to run the script code
 
 documents = []
 path = "./images/"

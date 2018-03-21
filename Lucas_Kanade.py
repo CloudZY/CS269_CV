@@ -3,6 +3,8 @@ import cv2
 import os
 import glob
 
+# Basic Lucas_Kanade model with pyramidal implementation
+
 #cap = cv2.VideoCapture('videoplayback.mp4')
 
 # params for ShiTomasi corner detection

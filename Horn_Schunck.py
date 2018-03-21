@@ -86,60 +86,69 @@ def lucas_kanade(img1, img2):
 
     return res
 
-# if __name__ == '__main__':
-#     prev_gray = cv.LoadImage('./other-data-gray/Beanbags/frame10.png', cv.CV_LOAD_IMAGE_GRAYSCALE)
-#     curr_gray = cv.LoadImage('./other-data-gray/Beanbags/frame11.png', cv.CV_LOAD_IMAGE_GRAYSCALE)
-#
-#     prev_color = cv.LoadImage('./other-data-gray/Beanbags/frame10.png', cv.CV_LOAD_IMAGE_COLOR)
-#     curr_color = cv.LoadImage('./other-data-gray/Beanbags/frame11.png', cv.CV_LOAD_IMAGE_COLOR)
-#
-#     cols = prev_gray.width
-#     rows = prev_gray.height
-#
-#     velx = cv.CreateMat(rows, cols, cv.CV_32FC1)
-#     vely = cv.CreateMat(rows, cols, cv.CV_32FC1)
-#     cv.SetZero(velx)
-#     cv.SetZero(vely)
-#
-#     cv.CalcOpticalFlowHS(prev_gray, curr_gray, False, velx, vely, 100.0,
-#                          (cv.CV_TERMCRIT_ITER | cv.CV_TERMCRIT_EPS, 64, 0.01))
-#
-#     # cv.CalcOpticalFlowLK(prev_gray, curr_gray, (15, 15), velx, vely)
-#
-#     cv.NamedWindow("Optical flow HS")
-#     cv.ShowImage("Optical flow HS", draw_flow(prev_color, velx, vely))
-#     # cv.SaveImage("resultHS.png", desImageHS)
-#
-#     cv.NamedWindow("flow HSV")
-#     cv.ShowImage("flow HSV", draw_hsv(velx, vely))
-#
-#     cv.NamedWindow("glitch")
-#     cv.ShowImage("glitch", warp_flow(prev_color, velx, vely))
-#
-#     cv.WaitKey(0)
-#     cv.DestroyAllWindows()
+def generate_image():
+    prev_gray = cv.LoadImage('./other-data-gray/Beanbags/frame10.png', cv.CV_LOAD_IMAGE_GRAYSCALE)
+    curr_gray = cv.LoadImage('./other-data-gray/Beanbags/frame11.png', cv.CV_LOAD_IMAGE_GRAYSCALE)
+
+    prev_color = cv.LoadImage('./other-data-gray/Beanbags/frame10.png', cv.CV_LOAD_IMAGE_COLOR)
+    curr_color = cv.LoadImage('./other-data-gray/Beanbags/frame11.png', cv.CV_LOAD_IMAGE_COLOR)
+
+    cols = prev_gray.width
+    rows = prev_gray.height
+
+    velx = cv.CreateMat(rows, cols, cv.CV_32FC1)
+    vely = cv.CreateMat(rows, cols, cv.CV_32FC1)
+    cv.SetZero(velx)
+    cv.SetZero(vely)
+
+    cv.CalcOpticalFlowHS(prev_gray, curr_gray, False, velx, vely, 100.0,
+                            (cv.CV_TERMCRIT_ITER | cv.CV_TERMCRIT_EPS, 64, 0.01))
+
+    # cv.CalcOpticalFlowLK(prev_gray, curr_gray, (15, 15), velx, vely)
+
+    cv.NamedWindow("Optical flow HS")
+    cv.ShowImage("Optical flow HS", draw_flow(prev_color, velx, vely))
+    # cv.SaveImage("resultHS.png", desImageHS)
+
+    cv.NamedWindow("flow HSV")
+    cv.ShowImage("flow HSV", draw_hsv(velx, vely))
+
+    cv.NamedWindow("glitch")
+    cv.ShowImage("glitch", warp_flow(prev_color, velx, vely))
+
+    cv.WaitKey(0)
+    cv.DestroyAllWindows()
+
+def evaluate_model():
+    image_directory_path = './other-data'
+    ground_truth_directory_path = './other-gt-flow'
+    dataset = []
+    epe_set = []
+    aae_set = []
+    for dataset_name in os.listdir(image_directory_path):
+        dataset.append(dataset_name)
+        predict_flow = lucas_kanade(image_directory_path+'/'+dataset_name+'/frame10.png',
+                            image_directory_path + '/' + dataset_name + '/frame11.png')
+        ground_flow = evaluation.read_flow(ground_truth_directory_path+'/'+dataset_name+'/flow10.flo')
+        epe = evaluation.EPE_RB(ground_flow, predict_flow)
+        aae = evaluation.AAE_RB(ground_flow, predict_flow)
+        epe_set.append(epe)
+        aae_set.append(aae)
+    print(dataset)
+    print(epe_set)
+    print(aae_set)
+
+    with open('Lucas_Kanade_result.txt', 'w') as f:
+    # with open('Horn_Schunck_result.txt', 'w') as f:
+        for i in range(len(dataset)):
+            f.write(dataset[i] + ' ' + str(epe_set[i]) + ' ' + str(aae_set[i]) +'\n')
+    f.close()
 
 if __name__ == '__main__':
-    # image_directory_path = './other-data'
-    # ground_truth_directory_path = './other-gt-flow'
-    # dataset = []
-    # epe_set = []
-    # aae_set = []
-    # for dataset_name in os.listdir(image_directory_path):
-    #     dataset.append(dataset_name)
-    #     predict_flow = lucas_kanade(image_directory_path+'/'+dataset_name+'/frame10.png',
-    #                         image_directory_path + '/' + dataset_name + '/frame11.png')
-    #     ground_flow = evaluation.read_flow(ground_truth_directory_path+'/'+dataset_name+'/flow10.flo')
-    #     epe = evaluation.EPE_RB(ground_flow, predict_flow)
-    #     aae = evaluation.AAE_RB(ground_flow, predict_flow)
-    #     epe_set.append(epe)
-    #     aae_set.append(aae)
-    # print(dataset)
-    # print(epe_set)
-    # print(aae_set)
-    #
-    # with open('Lucas_Kanade_result.txt', 'w') as f:
-    # # with open('Horn_Schunck_result.txt', 'w') as f:
-    #     for i in range(len(dataset)):
-    #         f.write(dataset[i] + ' ' + str(epe_set[i]) + ' ' + str(aae_set[i]) +'\n')
-    # f.close()
+    # genrate all images after adding optical flow
+    generate_image()
+
+    # evaluate model with AAE and EPE value
+    evaluate_model()
+
+

@@ -2,6 +2,8 @@ import os
 import numpy as np
 import cv2
 
+# File that used to show the video after adding optical flow
+
 def draw_flow(img, velx, vely, step=16):
     cols, rows = img.shape[:2]
     for i in range(0, cols, step):
@@ -29,41 +31,45 @@ def read_flow(filename):
     f.close()
     return data2d
 
-predict_flows = []
-images = []
-for flow in os.listdir("./flow/"):
-    predict_flows.append("./flow/" + str(flow))
-for image in os.listdir("./images/"):
-    images.append("./images/"+str(image))
-print(predict_flows)
+def show_vedio():
+    predict_flows = []
+    images = []
+    for flow in os.listdir("./flow/"):
+        predict_flows.append("./flow/" + str(flow))
+    for image in os.listdir("./images/"):
+        images.append("./images/"+str(image))
+    print(predict_flows)
 
-predict_flows.sort()
-images.sort()
+    predict_flows.sort()
+    images.sort()
 
-for index in range(len(predict_flows)):
-    frame = cv2.imread(images[index])
-    frame_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    for index in range(len(predict_flows)):
+        frame = cv2.imread(images[index])
+        frame_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
-    flow = read_flow(predict_flows[index])
-    velx = []
-    vely = []
-    for row in flow:
-        newx = []
-        newy = []
-        for col in row:
-            newx.append(col[0])
-            newy.append(col[1])
-        velx.append(newx)
-        vely.append(newy)
+        flow = read_flow(predict_flows[index])
+        velx = []
+        vely = []
+        for row in flow:
+            newx = []
+            newy = []
+            for col in row:
+                newx.append(col[0])
+                newy.append(col[1])
+            velx.append(newx)
+            vely.append(newy)
 
-    img = draw_flow(frame,velx,vely)
-    #img = cv2.add(frame,mask)
-    cv2.imshow(images[0], img)
-    k = cv2.waitKey(30) & 0xff
-    if k == 27:
-        break
+        img = draw_flow(frame,velx,vely)
+        #img = cv2.add(frame,mask)
+        cv2.imshow(images[0], img)
+        k = cv2.waitKey(30) & 0xff
+        if k == 27:
+            break
 
-    # Now update the previous frame and previous points
-    old_gray = frame_gray.copy()
+        # Now update the previous frame and previous points
+        old_gray = frame_gray.copy()
 
-cv2.destroyAllWindows()
+    cv2.destroyAllWindows()
+
+if __name__ == '__main__':
+    show_vedio()
