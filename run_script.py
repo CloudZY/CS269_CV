@@ -18,7 +18,7 @@ for i in range(len(documents)):
     if i < 10:
         num = "0" + str(i)
 
-    instruction =  "/deepmatching " + str(documents[i]) + " " + str(documents[i+1])+ " | ./deepflow2 " + str(documents[i]) + " " + str(documents[i+1]) + " ./flow/"+ num +".sintel.flo -match -middlebury"
+    instruction =  "./deepmatching_after_match/deepmatching " + str(documents[i]) + " " + str(documents[i+1])+ " | ./DeepFlow2_after_match/deepflow2 " + str(documents[i]) + " " + str(documents[i+1]) + " ./flow/"+ num +".sintel.flo -match -middlebury"
     completed = subprocess.run(instruction,shell=True)
     print('returncode:', completed.returncode)
 
