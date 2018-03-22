@@ -15,7 +15,7 @@ def imgs2video(imgs_dir, save_name):
 
     images = []
     for image in os.listdir(imgs_dir):
-        images.append(imgs_dir + str(image))
+        images.append(imgs_dir + "/"+str(image))
     #print(images)
     for i in images:
         frame = cv2.imread(i)
@@ -25,4 +25,4 @@ def imgs2video(imgs_dir, save_name):
 
 if __name__ == '__main__':
     # Convert all images to vedio
-    imgs2video("./images_after_warp_farneback","farneback_after_warp_video.avi")
+    imgs2video("./images_after_flow_farneback","farneback_after_flow_video.avi")
