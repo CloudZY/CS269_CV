@@ -76,6 +76,24 @@ def generate_image():
             break
         flow_visualization.save_flow_farneback(gunnar_farneback(images[i],images[i+1]), images[i], outnames[i])
 
+def generate_warp():
+    images = []
+    outnames = []
+
+    for image in os.listdir("./images/"):
+        images.append("./images/" + str(image))
+    images = images[:-1]
+    images.sort()
+    for i in range(len(images)):
+        name = str(i+1)
+        if i+1 < 10:
+            name = "0" + name
+        outnames.append("./images_after_warp_farneback/" + "out_image_" + name + ".png")
+    for i in range(len(images)):
+        if i+1 == len(images):
+            break
+        flow_visualization.save_warp_farneback(gunnar_farneback(images[i],images[i+1]), images[i], outnames[i])
+
 def evaluate_model():
     image_directory_path = './other-data'
     ground_truth_directory_path = './other-gt-flow'
@@ -139,13 +157,16 @@ def generate_vedio():
 
 if __name__ == '__main__':
     #combine all pictures and generate vedio
-    generate_vedio()
+    #generate_vedio()
 
     #evaluate model with AAE and EPE value
-    evaluate_model()
+    #evaluate_model()
 
     #genrate all images after adding optical flow
-    generate_image()
+    #generate_image()
+
+    #genrate all images after adding warp
+    generate_warp()
 
 
 

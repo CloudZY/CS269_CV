@@ -82,7 +82,11 @@ def save_flow_farneback(flow, imagename, outname):
     curr_gray = cv2.cvtColor(curr, cv2.COLOR_BGR2GRAY)
     out_flow = draw_flow(curr, velx, vely)
 
-    cv2.imwrite(outname, out_flow)
+    ###
+    img_warp = Farneback.warp_flow(curr, flow)
+    cv2.imwrite(outname, img_warp)
+    ####
+    #cv2.imwrite(outname, out_flow)
 
     ##def draw_flow(img, flow, step=16):
     ##    h, w = img.shape[:2]
@@ -102,7 +106,40 @@ def save_flow_farneback(flow, imagename, outname):
     ##
     ##cv2.imshow('./flow/frame10.png',out_flow)
 
-def generate_image_farneback():
+def save_warp_farneback(flow, imagename, outname):
+    #flow = read_flow(flowname)
+    # flow = read_flow("./flow/sintel.flo")
+    #print(flowname, imagename, outname)
+    velx = []
+    vely = []
+    for row in flow:
+        newx = []
+        newy = []
+        for col in row:
+            newx.append(col[0])
+            newy.append(col[1])
+        velx.append(newx)
+        vely.append(newy)
+
+    def draw_flow(img, velx, vely, step=16):
+        cols, rows = img.shape[:2]
+        for i in range(0, cols, step):
+            for j in range(0, rows, step):
+                dx = int(velx[i][j])
+                dy = int(vely[i][j])
+                cv2.line(img, (j, i), (j + dy, i + dx), (0, 255, 0))
+                cv2.circle(img, (j, i), 1, (0, 255, 0), -1)
+        return img
+
+    curr = cv2.imread(imagename)
+    #curr_gray = cv2.cvtColor(curr, cv2.COLOR_BGR2GRAY)
+    #out_flow = draw_flow(curr, velx, vely)
+
+    ###
+    img_warp = Farneback.warp_flow(curr, flow)
+    cv2.imwrite(outname, img_warp)
+
+def generate_warp():
     flows = []
     images = []
     outnames = []
@@ -141,4 +178,5 @@ def generate_image():
 
 if __name__ == '__main__':
     generate_image()
+    #generate_warp()
 
