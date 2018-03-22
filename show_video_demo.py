@@ -31,7 +31,7 @@ def read_flow(filename):
     f.close()
     return data2d
 
-def show_vedio():
+def show_video():
     predict_flows = []
     images = []
     for flow in os.listdir("./flow/"):
@@ -72,4 +72,4 @@ def show_vedio():
     cv2.destroyAllWindows()
 
 if __name__ == '__main__':
-    show_vedio()
+    show_video()
